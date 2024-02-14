@@ -1,4 +1,5 @@
 import {CardPropsInterface} from "./card.props.interface.ts";
+import points from '../../assets/points.svg'
 
 const Card = ({ text }: CardPropsInterface) => {
     return (
@@ -9,7 +10,7 @@ const Card = ({ text }: CardPropsInterface) => {
                 </p>
             </div>
             <div className={"bg-[#FFFFFF] rounded-r-xl"}>
-                <img src="src/core/assets/ponts.svg" alt="menu" />
+                <img src={points} alt="menu" />
             </div>
         </div>
     );

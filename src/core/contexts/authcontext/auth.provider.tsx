@@ -1,12 +1,12 @@
 import {providerAuthInterface} from "./interface/auth.interface.ts";
 import {authContext} from "./auth.context.tsx";
 import {useEffect, useState} from "react";
-import {boardApi} from "../../apis/board.api.ts";
 import boardConstants from "../../constants/board.constants.ts";
+import boardApi from "../../apis/board.api.ts";
 
 function AuthProvider({ children }: providerAuthInterface): JSX.Element{
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false)
-    const [tkn, setTkn] = useState<string>("");
+    const [id, setId] = useState<string>("");
     const [message, setMessage] = useState<string>("");
 
     useEffect(() => {
@@ -15,39 +15,47 @@ function AuthProvider({ children }: providerAuthInterface): JSX.Element{
         );
         if(savedToken) setIsAuthenticated(true)
     }, []);
-    async function login(email: string, password: string):Promise<void>{
+    async function login(username: string, password: string):Promise<void>{
         try{
-           const response = await boardApi.post('/user/',{email, password});
-           if (response.status === 200){
-               const { message } = response.data;
-               setMessage(message)
-           }
-        }catch(error){
-           throw new Error("Error into authenticate")
+           const response = await boardApi.post('/user/login',{username, password});
+            //const { ok } = response.data;
+            window.localStorage.setItem(boardConstants.tokenKey, response.data.data[0]['token']);
+            setIsAuthenticated(true);
+            setId(response.data.data[0]['id'])
+            window.localStorage.setItem(boardConstants.IDUSER,response.data.data[0]['id'])
+            return;
+         }catch(error){
+            const msg = error as string
+            setMessage(msg)
+            throw error;
         }
     }
-    async function signup( email: string, password: string){
+    async function signup( username: string, password: string){
         try{
-            const response = await boardApi.post("/sign", {
-                email,
+            const response = await boardApi.post("/user/sign", {
+                username,
                 password
             });
-            const { token } = response.data;
+            const { token, id } = response.data.data[0];
             window.localStorage.setItem(boardConstants.tokenKey, token);
             setIsAuthenticated(true);
-            setTkn(token)
+            setId(id)
+            window.localStorage.setItem(boardConstants.IDUSER,id)
             return;
         }catch(error){
-            throw new Error("Fail into authenticate")
+            const msg = error as string
+            setMessage(msg)
+            throw error;
         }
     }
-
+    
     function logout(){
         window.localStorage.removeItem(boardConstants.tokenKey);
+        window.localStorage.removeItem(boardConstants.IDUSER);
         setIsAuthenticated(false)
     }
     return (
-        <authContext.Provider value={{isAuthenticated, tkn, message,signup, login, logout}}>
+        <authContext.Provider value={{isAuthenticated, id, message,signup, login, logout}}>
             {children}
         </authContext.Provider>
     )

@@ -1,27 +1,47 @@
-import {useState} from "react";
+import React, {useState} from "react";
 import Card from "../card/Card.tsx";
+import point from "../../assets/points.svg"
+import {ListPropsInterfaces} from "./interfaces/list.props.interfaces.ts";
 
 const message: string[] = ['hola mundo desde java', 'Hola mundo desde python', 'Hola mundo desde golang']
 
-const List = () => {
+const List = ({title, id}: ListPropsInterfaces) => {
     const [showEdit, setShowEdit] = useState<boolean>(false)
-
+    const [titleList, setTitleList] = useState(title)
+    const [position, setPosition] = useState({left:0, top:0})
+    const [showModal, setShowModal] = useState(false)
     const toggleShowEdit = ()=>{
         setShowEdit(!showEdit)
+    }
+
+    const openModal = (event: React.MouseEvent<HTMLDivElement, MouseEvent>)=>{
+        const rect = event.target.getBoundingClientRect();
+        setPosition({left:rect.left, top: rect.bottom + window.scrollY})
+        setShowModal(true)
+    }
+    const closeModal = ()=>{
+        setShowModal(false)
     }
     return (
         <div className={"w-72 bg-[#F5F5F5] px-2 py-2 rounded-lg"}>
             <div className={"flex justify-between mb-2"}>
                 <div>
-                    <p className={"text-lg font-bold"}>To Do</p>
+                    <p className={"text-lg font-bold"}>{titleList}</p>
                 </div>
-                <div>
-                    <img src="src/core/assets/ponts.svg" alt="menu" />
+                <div onClick={openModal}>
+                    <img src={point} alt="menu" />
                 </div>
             </div>
+            {showModal && <div className="absolute bg-white p-4 rounded-lg shadow-lg flex flex-col items-start"
+                               style={{left: position.left, top: position.top}}>
+                
+                <button onClick={closeModal}>Edit</button>
+                <button>Delete</button>
+            </div>}
+
             {
-                message.map((text,index)=>(
-                    <Card key={index} text={text}/>
+                message.map((text, index) => (
+                        <Card key={index} text={text}/>
                     )
                 )
             }

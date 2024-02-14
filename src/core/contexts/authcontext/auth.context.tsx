@@ -4,7 +4,8 @@ import {createContext} from "react";
 //Implementing values into the context
 const authContextValue: authContextInterface={
     isAuthenticated: false,
-    token: null,
+    id: null,
+    message: '',
     login: async () => {},
     logout: () => {},
     signup: async () => {}
