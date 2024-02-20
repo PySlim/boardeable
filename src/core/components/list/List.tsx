@@ -1,6 +1,7 @@
 import React, {useState} from "react";
 import Card from "../card/Card.tsx";
 import point from "../../assets/points.svg"
+
 import {ListPropsInterfaces} from "./interfaces/list.props.interfaces.ts";
 
 const message: string[] = ['hola mundo desde java', 'Hola mundo desde python', 'Hola mundo desde golang']
@@ -15,6 +16,7 @@ const List = ({title, id}: ListPropsInterfaces) => {
     }
 
     const openModal = (event: React.MouseEvent<HTMLDivElement, MouseEvent>)=>{
+        // @ts-ignore
         const rect = event.target.getBoundingClientRect();
         setPosition({left:rect.left, top: rect.bottom + window.scrollY})
         setShowModal(true)
